@@ -13,8 +13,6 @@ export async function getStationInformation() {
     
         const stations = response.data.data.stations;
     
-        //console.log(`GET: Here's the list of stations`, stations);
-    
         return stations;
       } catch (errors) {
         console.error(errors);
@@ -35,13 +33,10 @@ export async function getStationStatus() {
     
         const status = response.data.data.stations;
     
-        //console.log(`GET: Here's the list of stations`, status);
-    
         return status;
       } catch (errors) {
         console.error(errors);
       }
     
-      return;
-   
+      return;  
 }

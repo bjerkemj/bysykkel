@@ -19,35 +19,35 @@ function App() {
 
   useEffect(() => {
     getData();
-    console.log("ferdig")
   }, [])
   
   var place;
 
+  const getStations = async() => {
+    const data = [];
+    await getStationInformation().then((stations)=>{
+        for (const i in stations){
+          data.push(stations[i])
+        }
+        
+        setStationsInformation(data);
+
+        getStationStatus().then((res)=>{
+          for (const i in res){
+            for (const j in data){
+              if(res[i].station_id === data[j].station_id){
+                data[j].num_bikes_available = res[i].num_bikes_available;
+              }
+            }
+          }
+        });
+    });
+  }
+  
+
   const getData = async () => {
     try {
-      const data = [];
-      await getStationInformation().then((res)=>{
-        for (const i in res){
-          data.push(res[i])
-        }
-        setStationsInformation(data);
-      });
-      await getStationStatus().then((res)=>{
-        for (const i in res){
-          console.log(res[i])
-          for (const j in stationsInformation){
-            console.log(stationsInformation[j].station_id)
-            if(res[i].station_id === stationsInformation[j].station_id){
-              stationsInformation[j].num_bikes_available = res[i].num_bikes_available;
-              console.log("halla")
-            }
-
-          }
-          //data.push(res[i])
-        }
-      });
-
+      await getStations();
     } catch (e) {
       console.error(e);
     }
@@ -59,17 +59,17 @@ function App() {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
   })
 
-  // const [map, setMap] = React.useState(null)
-  // const onLoad = React.useCallback(function callback(map) {
-  //   setTimeout(500);
-  //   const bounds = new window.google.maps.LatLngBounds();
-  //   map.fitBounds(bounds);
-  //   setMap(map)
-  // }, [])
+   /* const [map, setMap] = React.useState(null)
+   const onLoad = React.useCallback(function callback(map) {
+     setTimeout(500);
+     const bounds = new window.google.maps.LatLngBounds();
+     map.fitBounds(bounds);
+     setMap(map)
+   }, [])
 
-  // const onUnmount = React.useCallback(function callback(map) {
-  //   setMap(null)
-  // }, [])
+   const onUnmount = React.useCallback(function callback(map) {
+     setMap(null)
+   }, []) */
 
   return isLoaded ? (
     <div>      
@@ -80,25 +80,24 @@ function App() {
           //onLoad={onLoad}
           //onUnmount={onUnmount}
         >
-          { /* Child components, such as markers, info windows, etc. */ }
-          {Object.keys(stationsInformation).map((key) => (
+          
+          { stationsInformation.length && Object.keys(stationsInformation).map((key) => (
             place={
               lat: stationsInformation[key].lat,
               lng: stationsInformation[key].lon
             },
-            <Marker 
+            stationsInformation[key].num_bikes_available && <Marker
+            key={stationsInformation[key].station_id}
             position={place}
-            label={stationsInformation[key].num_bikes_available}
+            label={stationsInformation[key].num_bikes_available.toString()}
             />
             
           ))}
           <Marker position={center} label={"20"} />
           <></>
         </GoogleMap>
-        <button onClick={() => Promise.resolve(getStationStatus()).then(function(v){
-          console.log(v)
-        }) }>Get stations</button>
-        <button onClick={() => console.log(stationsInformation)}>PP</button>
+    
+        <button onClick={() => console.log(typeof stationsInformation[1].num_bikes_available)}>PP</button>
       </div>
 
   ) : <></>
