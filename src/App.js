@@ -19,7 +19,7 @@ function App() {
 
   useEffect(() => {
     getData();
-  }, [])
+  })
   
   var place;
 
