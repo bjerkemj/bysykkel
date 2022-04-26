@@ -18,7 +18,7 @@ function App() {
   const [stationsInformation, setStationsInformation] = useState([]);
 
   useEffect(() => {
-    getData();
+    getStations();
   }, [])
   
   var place;
@@ -45,14 +45,6 @@ function App() {
   }
   
 
-  const getData = async () => {
-    try {
-      await getStations();
-    } catch (e) {
-      console.error(e);
-    }
-    
-  }
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
