@@ -24,24 +24,20 @@ function App() {
   var place;
 
   const getStations = async() => {
-    const data = [];
-    await getStationInformation().then((stations)=>{
-        for (const i in stations){
-          data.push(stations[i])
-        }
-        
-        setStationsInformation(data);
+    const [stations, statuses] = await Promise.all([getStationInformation(), getStationStatus()]);
+    
 
-        getStationStatus().then((res)=>{
-          for (const i in res){
-            for (const j in data){
-              if(res[i].station_id === data[j].station_id){
-                data[j].num_bikes_available = res[i].num_bikes_available;
-              }
-            }
-          }
-        });
-    });
+    for (const i in stations){
+      for (const j in statuses){
+        if(stations[i].station_id === statuses[j].station_id){
+          stations[j].num_bikes_available = statuses[i].num_bikes_available;
+        }
+      }
+    }
+
+    setStationsInformation(stations);
+    console.log(stations);
+
   }
   
 
@@ -89,7 +85,7 @@ function App() {
           <></>
         </GoogleMap>
     
-        <button onClick={() => console.log(typeof stationsInformation[1].num_bikes_available)}>PP</button>
+        <button onClick={() => console.log(stationsInformation)}>PP</button>
       </div>
 
   ) : <></>
