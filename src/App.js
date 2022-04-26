@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, Marker, MarkerClusterer, useJsApiLoader } from '@react-google-maps/api';
 import { getStationInformation, getStationStatus } from "./dataHandler";
 
 const containerStyle = {
@@ -20,8 +20,6 @@ function App() {
   useEffect(() => {
     getStations();
   }, [])
-  
-  var place;
 
   const getStations = async() => {
     const [stations, statuses] = await Promise.all([getStationInformation(), getStationStatus()]);
@@ -36,7 +34,6 @@ function App() {
     }
 
     setStationsInformation(stations);
-    console.log(stations);
 
   }
   
@@ -69,23 +66,19 @@ function App() {
           //onUnmount={onUnmount}
         >
           
-          { stationsInformation.length && Object.keys(stationsInformation).map((key) => (
-            place={
+          { Object.keys(stationsInformation).map((key) => (
+            <Marker
+            key={stationsInformation[key].station_id}
+            position={{
               lat: stationsInformation[key].lat,
               lng: stationsInformation[key].lon
-            },
-            stationsInformation[key].num_bikes_available && <Marker
-            key={stationsInformation[key].station_id}
-            position={place}
+            }}
             label={stationsInformation[key].num_bikes_available.toString()}
             />
             
           ))}
-          <Marker position={center} label={"20"} />
-          <></>
         </GoogleMap>
     
-        <button onClick={() => console.log(stationsInformation)}>PP</button>
       </div>
 
   ) : <></>
